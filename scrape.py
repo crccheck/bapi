@@ -25,7 +25,7 @@ def convert_raw_data(lines):
     location_bit = doc.xpath('//div[@class="location"]')[0]
     location_bits = location_bit.xpath('.//text()')
     name, street, city, zip = location_bits
-    import ipdb; ipdb.set_trace()
+    avail = doc.xpath('//div[@class="avail"]/strong/text()')
     return {
         'status': status,
         'latitude': lat,
@@ -34,6 +34,8 @@ def convert_raw_data(lines):
         'street': street,
         'city': city,
         'state_zip': zip,
+        'bikes': int(avail[0]),
+        'docks': int(avail[1]),
     }
 
 

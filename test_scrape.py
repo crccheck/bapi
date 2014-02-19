@@ -23,6 +23,9 @@ class FindDataTest(unittest.TestCase):
         self.assertEqual(data[0]['city'], 'CITY')
         self.assertEqual(data[0]['state_zip'], 'ST ZIP')
 
+        # Can get availability
+        self.assertEqual(data[0]['bikes'], 7)
+        self.assertEqual(data[0]['docks'], 6)
 
 
 if __name__ == '__main__':
