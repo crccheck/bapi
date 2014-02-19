@@ -1,6 +1,8 @@
 import datetime
+import os
 
-from flask import Flask, jsonify
+from flask import abort, Flask, jsonify
+import requests
 
 import scrape
 
@@ -10,8 +12,18 @@ app = Flask(__name__)
 
 @app.route('/<city_name>/')
 def city(city_name):
-    with open('test_data.txt', 'r') as f:
-        data = scrape.find_data(f.read())
+    url = os.environ.get(city_name.upper())
+    if not url:
+        abort(404)
+    response = requests.get(
+        url,
+        headers={
+            'User-Agent': 'bscrapeai/0.1',
+        },
+    )
+    data = scrape.find_data(response.text)
+    if response.status_code != 200:
+        abort(response.status_code)
     output = {
         'city': city_name,
         'now': datetime.datetime.now(),
