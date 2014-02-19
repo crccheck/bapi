@@ -2,6 +2,7 @@ import re
 
 
 re_status = re.compile(r'marker\-(\w+)\.png')
+re_point = re.compile(r'LatLng.([\d.-]+), ([\d.-]+)\)')
 
 
 def chunks(l, n):
@@ -17,8 +18,11 @@ def chunks(l, n):
 def convert_raw_data(lines):
     # assert len(lines) == 6
     status = re_status.search(lines[0]).group(1)
+    lat, lng = re_point.search(lines[2]).groups()
     return {
         'status': status,
+        'latitude': lat,
+        'longitude': lng,
     }
 
 
