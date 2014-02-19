@@ -1,4 +1,5 @@
 import re
+from lxml.html import fragment_fromstring
 
 
 re_status = re.compile(r'marker\-(\w+)\.png')
@@ -19,10 +20,20 @@ def convert_raw_data(lines):
     # assert len(lines) == 6
     status = re_status.search(lines[0]).group(1)
     lat, lng = re_point.search(lines[2]).groups()
+    html = lines[4][lines[4].index('"') + 1: lines[4].rindex('"')]
+    doc = fragment_fromstring('<div>{}</div>'.format(html))
+    location_bit = doc.xpath('//div[@class="location"]')[0]
+    location_bits = location_bit.xpath('.//text()')
+    name, street, city, zip = location_bits
+    import ipdb; ipdb.set_trace()
     return {
         'status': status,
         'latitude': lat,
         'longitude': lng,
+        'name': name,
+        'street': street,
+        'city': city,
+        'state_zip': zip,
     }
 
 

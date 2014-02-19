@@ -17,6 +17,12 @@ class FindDataTest(unittest.TestCase):
         self.assertEqual(data[0]['latitude'], '30.26408')
         self.assertEqual(data[0]['longitude'], '-97.74355')
 
+        # Can get address
+        self.assertEqual(data[0]['name'], 'NAME')
+        self.assertEqual(data[0]['street'], 'STREET')
+        self.assertEqual(data[0]['city'], 'CITY')
+        self.assertEqual(data[0]['state_zip'], 'ST ZIP')
+
 
 
 if __name__ == '__main__':
