@@ -1,6 +1,9 @@
 import re
 
 
+re_status = re.compile(r'marker\-(\w+)\.png')
+
+
 def chunks(l, n):
     """
     Yield successive n-sized chunks from l.
@@ -11,10 +14,18 @@ def chunks(l, n):
         yield l[i:i+n]
 
 
+def convert_raw_data(lines):
+    # assert len(lines) == 6
+    status = re_status.search(lines[0]).group(1)
+    return {
+        'status': status,
+    }
+
+
 def find_data(text):
     # trim text
     start = text.index('var icon')
     text = text[start:]
     end = text.index('}')
     lines = text[:end].strip().split('\n')
-    return list(chunks(lines, 6))
+    return map(convert_raw_data, chunks(lines, 6))
