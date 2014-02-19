@@ -1,7 +1,8 @@
+from functools import wraps
 import datetime
 import os
 
-from flask import abort, Flask, jsonify
+from flask import abort, Flask, jsonify, request, current_app
 import requests
 
 import scrape
@@ -11,7 +12,24 @@ app = Flask(__name__)
 cache = {}
 
 
+# http://flask.pocoo.org/snippets/79/
+def jsonp(func):
+    """Wraps JSONified output for JSONP requests."""
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        callback = request.args.get('callback', False)
+        if callback:
+            data = str(func(*args, **kwargs).data)
+            content = str(callback) + '(' + data + ')'
+            mimetype = 'application/javascript'
+            return current_app.response_class(content, mimetype=mimetype)
+        else:
+            return func(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/<city_name>/')
+@jsonp
 def city(city_name):
     url = os.environ.get(city_name.upper())
     if not url:
