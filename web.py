@@ -51,6 +51,8 @@ def city(city_name):
             'city': city_name,
             'now': now,
             'result_length': len(data),
+            'bike_total': sum(x['bikes'] for x in data),
+            'dock_total': sum(x['docks'] for x in data),
             'results': data,
         }
         cache[cache_key] = output
