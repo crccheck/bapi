@@ -8,6 +8,8 @@ import requests
 import scrape
 
 
+CACHE_MINUTES = 9
+
 app = Flask(__name__)
 cache = {}
 
@@ -37,7 +39,8 @@ def city(city_name):
     cache_key = url
     now = datetime.datetime.now()
     output = cache.get(cache_key)
-    if not output or now - output['now'] > datetime.timedelta(minutes=12):
+    if not output or now - output['now'] > datetime.timedelta(
+            minutes=CACHE_MINUTES):
         response = requests.get(
             url,
             headers={
