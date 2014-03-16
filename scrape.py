@@ -24,7 +24,12 @@ def convert_raw_data(lines):
     doc = fragment_fromstring('<div>{}</div>'.format(html))
     location_bit = doc.xpath('//div[@class="location"]')[0]
     location_bits = location_bit.xpath('.//text()')
-    name, street, city, zip = location_bits
+    if len(location_bits) == 4:
+        name, street, city, zip = location_bits
+    else:
+        # XXX untested
+        name, street, city_zip = location_bits
+        city, zip = city_zip.split(', ', 2)
     avail = doc.xpath('//div[@class="avail"]/strong/text()')
     return {
         'status': status,
