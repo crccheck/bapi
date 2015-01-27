@@ -18,19 +18,15 @@ def chunks(l, n):
 
 def convert_raw_data(lines):
     # assert len(lines) == 6
+    # status can be: active/specialevent/partialservice/outofservice/comingsoon
     status = re_status.search(lines[0]).group(1)
     lat, lng = re_point.search(lines[2]).groups()
     html = lines[4][lines[4].index('"') + 1: lines[4].rindex('"')]
     doc = fragment_fromstring('<div>{}</div>'.format(html))
-    location_bit = doc.xpath('//div[@class="location"]')[0]
-    location_bits = location_bit.xpath('.//text()')
-    if len(location_bits) == 4:
-        name, street, city, zip = location_bits
-    else:
-        # XXX untested
-        name, street, city_zip = location_bits
-        city, zip = city_zip.split(', ', 2)
-    avail = doc.xpath('//div[@class="avail"]/strong/text()')
+    name = doc.xpath('./div[@class="markerTitle"]/h3/text()')[0]
+    street, city_zip = doc.xpath('./div[@class="markerAddress"]/text()')
+    city, zip = city_zip.split(', ')
+    bikes, docks = doc.xpath('//div[@class="markerAvail"]//h3/text()')
     return {
         'status': status,
         'latitude': lat,
@@ -39,8 +35,8 @@ def convert_raw_data(lines):
         'street': street,
         'city': city,
         'state_zip': zip,
-        'bikes': int(avail[0]),
-        'docks': int(avail[1]),
+        'bikes': int(bikes),
+        'docks': int(docks),
     }
 
 
