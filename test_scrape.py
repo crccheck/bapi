@@ -21,6 +21,8 @@ class FindDataTest(unittest.TestCase):
         self.assertEqual(data[0]['name'], '2nd & Congress')
         self.assertEqual(data[0]['street'], '151 E. 2nd St.')
         self.assertEqual(data[0]['city'], 'Austin')
+        self.assertEqual(data[0]['state'], 'TX')
+        self.assertEqual(data[0]['zip'], '78701')
         self.assertEqual(data[0]['state_zip'], 'TX 78701')
 
         # Can get availability

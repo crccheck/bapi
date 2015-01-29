@@ -3,6 +3,7 @@ from lxml.html import fragment_fromstring
 
 
 re_status = re.compile(r'marker\-(\w+)\.png')
+re_addr2 = re.compile(r'(.+), (\w+) (\d{5})')
 re_point = re.compile(r'LatLng.([\d.-]+), ([\d.-]+)\)')
 
 
@@ -13,7 +14,7 @@ def chunks(l, n):
     http://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks-in-python
     """
     for i in xrange(0, len(l), n):
-        yield l[i:i+n]
+        yield l[i:i + n]
 
 
 def convert_raw_data(lines):
@@ -24,8 +25,8 @@ def convert_raw_data(lines):
     html = lines[4][lines[4].index('"') + 1: lines[4].rindex('"')]
     doc = fragment_fromstring('<div>{}</div>'.format(html))
     name = doc.xpath('./div[@class="markerTitle"]/h3/text()')[0]
-    street, city_zip = doc.xpath('./div[@class="markerAddress"]/text()')
-    city, zip = city_zip.split(', ')
+    street, addr2 = doc.xpath('./div[@class="markerAddress"]/text()')
+    city, state, zip = re_addr2.search(addr2).groups()
     bikes, docks = doc.xpath('//div[@class="markerAvail"]//h3/text()')
     return {
         'status': status,
@@ -34,9 +35,12 @@ def convert_raw_data(lines):
         'name': name,
         'street': street,
         'city': city,
-        'state_zip': zip,
+        'state': state,
+        'zip': zip,
         'bikes': int(bikes),
         'docks': int(docks),
+        # DEPRECATED in favor of separate state/zip fields
+        'state_zip': '{} {}'.format(state, zip),
     }
 
 
